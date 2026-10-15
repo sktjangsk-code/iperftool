@@ -1,0 +1,38 @@
+name: Build libiperf3.so
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "tools/build_iperf3.sh"
+      - ".github/workflows/build-iperf3.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git
+
+      - name: Build iperf3 for Android arm64
+        env:
+          IPERF_TAG: "3.15"
+        run: |
+          export ANDROID_NDK_HOME="${ANDROID_NDK_LATEST_HOME:-$ANDROID_NDK_ROOT}"
+          echo "NDK: $ANDROID_NDK_HOME"
+          sed -i 's/\r$//' tools/build_iperf3.sh
+          chmod +x tools/build_iperf3.sh
+          ./tools/build_iperf3.sh
+          file app/src/main/jniLibs/arm64-v8a/libiperf3.so || true
+
+      - name: Upload libiperf3.so
+        uses: actions/upload-artifact@v4
+        with:
+          name: libiperf3
+          path: app/src/main/jniLibs/arm64-v8a/libiperf3.so
+          if-no-files-found: error
