@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.IperfTool" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#303030</item>
+        <item name="android:statusBarColor">#3F51B5</item>
+        <item name="android:navigationBarColor">#303030</item>
+    </style>
+</resources>
